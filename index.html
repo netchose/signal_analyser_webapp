@@ -15,16 +15,7 @@
             var plot_chart;
             var play=0;
             
-            //AJAX REQUEST For default sound
-            var ajaxRequest = new XMLHttpRequest();
-            ajaxRequest.open('GET', 'wav/daftpunk.wav', true);
-            ajaxRequest.responseType = 'arraybuffer';
-            ajaxRequest.onload = function() {context.decodeAudioData(ajaxRequest.response,
-            function(buffer) {
-            sound_buffer= buffer;
-            $("#output").prop('disabled', false);
-            $("#output").html("<i class='fa fa-play'></i> Play");
-            });}
+
             
             
             //WEB AUDIO API
@@ -63,9 +54,21 @@
             var rate=1;
             
  
-            
             $(function() {
-            
+         
+             //AJAX REQUEST For default sound
+             
+             var ajaxRequest = new XMLHttpRequest();
+             ajaxRequest.open('GET', './wav/daftpunk.wav', true);
+             ajaxRequest.responseType = 'arraybuffer';
+             ajaxRequest.onload = function() {context.decodeAudioData(ajaxRequest.response,
+                 function(buffer) {
+                 sound_buffer= buffer;
+                 $("#output").prop('disabled', false);
+                 $("#output").html("<i class='fa fa-play'></i> Play");
+                 });}
+         
+         
             $('#audio_file').change(function(){
             var file=$("#audio_file")[0].files[0];
             $('#filename').val(file.name);
