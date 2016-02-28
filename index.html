@@ -15,9 +15,6 @@
             var plot_chart;
             var play=0;
             
-
-            
-            
             //WEB AUDIO API
             window.AudioContext = window.AudioContext || window.webkitAudioContext;
             var context = new AudioContext(); // Create audio container
@@ -56,81 +53,79 @@
  
             $(function() {
          
-             //AJAX REQUEST For default sound
-             
-             var ajaxRequest = new XMLHttpRequest();
-             ajaxRequest.open('GET', './wav/daftpunk.wav', true);
-             ajaxRequest.responseType = 'arraybuffer';
-             ajaxRequest.onload = function() {context.decodeAudioData(ajaxRequest.response,
-                 function(buffer) {
-                 sound_buffer= buffer;
-                 $("#output").prop('disabled', false);
-                 $("#output").html("<i class='fa fa-play'></i> Play");
-                 });}
-         
-         
+
             $('#audio_file').change(function(){
-            var file=$("#audio_file")[0].files[0];
-            $('#filename').val(file.name);
-            var reader = new FileReader();
-            reader.onload = function(ev) {context.decodeAudioData(ev.target.result, function(buffer) {
-            sound_buffer= buffer;
-            $("#output").html("<i class='fa fa-play'></i> Play");
-            });};
-            if (play==1)
-            {
-            play=0;
-            bufferSource.stop(0);
-            }
-            reader.readAsArrayBuffer(file);
+                var file=$("#audio_file")[0].files[0];
+                $('#filename').val(file.name);
+                var reader = new FileReader();
+                reader.onload = function(ev) {context.decodeAudioData(ev.target.result, function(buffer) {
+                    sound_buffer= buffer;
+                    $("#output").html("<i class='fa fa-play'></i> Play");
+                    });};
+                if (play==1)
+                    {
+                    play=0;
+                    bufferSource.stop(0);
+                    }
+                reader.readAsArrayBuffer(file);
             });
             
             $("#rate").change(function(){
-            rate=$("#rate").val();
-            if (play==1)
-            {
-            bufferSource.playbackRate.value=rate;
-            }
+                rate=$("#rate").val();
+                if (play==1)
+                {
+                    bufferSource.playbackRate.value=rate;
+                }
             });
             
             $("#cutoff").change(function(){filter.frequency.value=$("#cutoff").val();});
             $("#resonance").change(function(){filter.Q.value=$("#resonance").val();});
             $("#type").change(function(){filter.type=$("#type").find(":selected").text();;});
             $("#filter_on").change(function(){
-            if ($("#filter_on").prop('checked'))
-            {
-            wa_gain.disconnect(analyser);
-            wa_gain.connect(filter);
-            filter.connect(analyser);
-            }
-            else
-            {
-            filter.disconnect(analyser);
-            wa_gain.connect(analyser);
-            }
+                if ($("#filter_on").prop('checked'))
+                {
+                    wa_gain.disconnect(analyser);
+                    wa_gain.connect(filter);
+                    filter.connect(analyser);
+                }
+                else
+                {
+                    filter.disconnect(analyser);
+                    wa_gain.connect(analyser);
+                }
             });
             
             
-            //JQUERY
             $("#output").click(function(event) {
-            
-            event.preventDefault();
-            play=(play+1)%2;
-            if (play==1){
-            bufferSource = context.createBufferSource();
-            bufferSource.loop = true;
-            bufferSource.buffer = sound_buffer;
-            bufferSource.playbackRate.value=rate;
-            bufferSource.connect(wa_gain);
-            bufferSource.start(0);
-            $("#output").html("<i class='fa fa-stop'></i> Stop");
-            }
-            else
-            {
-            bufferSource.stop(0);
-            $("#output").html("<i class='fa fa-play'></i> Play");
-            }
+                event.preventDefault();
+                play=(play+1)%2;
+                if (play==1){
+                bufferSource = context.createBufferSource();
+                bufferSource.loop = true;
+                bufferSource.buffer = sound_buffer;
+                bufferSource.playbackRate.value=rate;
+                bufferSource.connect(wa_gain);
+                bufferSource.start(0);
+                $("#output").html("<i class='fa fa-stop'></i> Stop");
+                }
+                else
+                {
+                bufferSource.stop(0);
+                $("#output").html("<i class='fa fa-play'></i> Play");
+                }
             });
+            
+            //AJAX REQUEST For default sound
+            
+            var ajaxRequest = new XMLHttpRequest();
+            ajaxRequest.open('GET', './wav/daftpunk.wav', true);
+            ajaxRequest.responseType = 'arraybuffer';
+            ajaxRequest.onload = function() {context.decodeAudioData(ajaxRequest.response,
+                function(buffer) {
+                sound_buffer= buffer;
+                $("#output").prop('disabled', false);
+                $("#output").html("<i class='fa fa-play'></i> Play");
+                });}
             
             ajaxRequest.send();
             plot_chart=create_chart();
@@ -143,7 +138,10 @@
     <body >
         <div class="container">
             <a href="https://github.com/vincentchoqueuse"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a>
-            
+           
+            <div class="pull-right">
+                <button type="button" id="output" class="btn btn-danger btn" data-toggle="button"  aria-pressed="false" autocomplete="off" style="margin-top:40px;width:150px;" disabled><i class="fa fa-play"></i> Wait ... </button>
+            </div>
             
             <h1 class="page-header">Signal Analyser</h1>
             <div class="row">
@@ -154,83 +152,76 @@
                         </div>
                         <div class="panel-body">
                             <div id="myform" class="form form-horizontal">
-                            <div class="form-group">
-                                <label class="control-label col-sm-4" for="file">File:</label>
-                                <div class="col-sm-8">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="filename" value="daftpunk" />
-                                    <span class="btn  btn-file input-group-addon" style="position: relative;overflow: hidden;">
-                                        <i class="fa fa-file"></i><input id="audio_file" type="file" />
-                                    </span>
+                                <div class="form-group">
+                                    <label class="control-label col-sm-4" for="file">File:</label>
+                                    <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="filename" value="daftpunk" />
+                                        <span class="btn  btn-file input-group-addon" style="position: relative;overflow: hidden;">
+                                            <i class="fa fa-file"></i><input id="audio_file" type="file" />
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
                             <div class="form-group">
-                            <label class="control-label col-sm-4" for="rate">Rate:</label>
-                            <div class="col-sm-8">
-                            <input id="rate" type="number" step="any" class="form-control" value="1" />
-                            </div>
-                            </div>
-                            <div class="form-group">
-                            <label class="control-label col-sm-4" for="output">Output</label>
-                            <div class="col-sm-8">
-                            <button id="output" class="btn btn-primary btn-block" disabled><i class="fa fa-play"></i> Wait ... </button>
+                                <label class="control-label col-sm-4" for="rate">Rate:</label>
+                                <div class="col-sm-8">
+                                    <input id="rate" type="number" step="any" class="form-control" value="1" />
+                                </div>
                             </div>
                         </div>
                     </div>
-                    </div>
                 </div> <!-- End of panel -->
+                
             <div class="panel panel-default">
-            <div class="panel-heading">
-            <div class="pull-right">
-            <input type="checkbox" id="filter_on">
-            </div>
-            <h3 class="panel-title">Filter</h3>
-            </div>
-            <div class="panel-body">
-            <div id="myform2" class="form form-horizontal">
-            <div class="form-group">
-            <label class="control-label col-sm-4" for="rate">Type:</label>
-            <div class="col-sm-8">
-            <select id="type" class="btn-block">
-            <option>lowpass</option>
-            <option>highpass</option>
-            <option>bandpass</option>
-            </select>
-            </div>
-            </div>
-            
-            <div class="form-group">
-            <label class="control-label col-sm-4" for="rate">Cut Off:</label>
-            <div class="col-sm-8">
-            <input id="cutoff" type="number" step="any" class="form-control" value="500" />
-            </div>
-            </div>
-            <div class="form-group">
-            <label class="control-label col-sm-4" for="output">Resonance</label>
-            <div class="col-sm-8">
-            <input id="resonance" type="number" step="any" class="form-control" value="0.5" />
-            </div>
-            </div>
-            </div>
-            </div>
+                <div class="panel-heading">
+                    <div class="pull-right">
+                        <input type="checkbox" id="filter_on">
+                    </div>
+                    <h3 class="panel-title">Filter</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="myform2" class="form form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="rate">Type:</label>
+                            <div class="col-sm-8">
+                                <select id="type" class="btn-block">
+                                    <option>lowpass</option>
+                                    <option>highpass</option>
+                                    <option>bandpass</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="rate">Cut Off:</label>
+                            <div class="col-sm-8">
+                                <input id="cutoff" type="number" step="any" class="form-control" value="500" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-4" for="output">Resonance</label>
+                            <div class="col-sm-8">
+                                <input id="resonance" type="number" step="any" class="form-control" value="0.5" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div> <!-- End of panel -->
             </div>
             <div class="col-md-8">
-            <div class="pull-right" style="padding-top:10px;">
-            <select id="visualisation">
-            <option>None</option>
-            <option>Time</option>
-            <option selected>Frequency</option>
-            </select>
-            </div>
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active">
-            <a href="#step" role="tab" >Visualisation</a>
-            </li>
-            </ul>
-            
+                <div class="pull-right" style="padding-top:10px;">
+                    <select id="visualisation">
+                        <option>None</option>
+                        <option>Time</option>
+                        <option selected>Frequency</option>
+                    </select>
+                </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#step" role="tab" >Visualisation</a>
+                    </li>
+                </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active " id="step">
