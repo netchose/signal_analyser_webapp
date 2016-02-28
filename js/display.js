@@ -16,24 +16,24 @@ $(function() {
            draw();
            });
   
-      //DRAW
-      draw= function(){
-        if (domain=="Time")
-        {
-            drawVisual = requestAnimationFrame(draw);
-            analyser.getByteTimeDomainData(dataArray);
-        }
-        if (domain=="Frequency")
-        {
-            drawVisual = requestAnimationFrame(draw);
-            analyser.getByteFrequencyData(dataArray);
-        }
-        plot_chart.series[0].setData(dataArray,true,false);
-    };
+
   
   });
 
-
+//DRAW
+draw= function(){
+    if (domain=="Time")
+    {
+        drawVisual = requestAnimationFrame(draw);
+        analyser.getByteTimeDomainData(dataArray);
+    }
+    if (domain=="Frequency")
+    {
+        drawVisual = requestAnimationFrame(draw);
+        analyser.getByteFrequencyData(dataArray);
+    }
+    plot_chart.series[0].setData(dataArray,true,false);
+};
 
 
 function create_chart(){
