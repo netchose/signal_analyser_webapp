@@ -2,4 +2,4 @@
 
 A signal analyser app based on the Web Audio API
 
-![Fourier Synthesis Application](screenshot.jpg)
+![Signal Analyser Application](screenshot.jpg)
