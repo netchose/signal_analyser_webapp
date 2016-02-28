@@ -1,5 +1,5 @@
-# Fourier_synthesis_web_audio
+# Signal Analyser App
 
-This application implements a periodic signal synthesizer. 
+A signal analyser app based on the Web Audio API
 
 ![Fourier Synthesis Application](screenshot.jpg)
